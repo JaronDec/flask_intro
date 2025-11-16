@@ -1,15 +1,16 @@
 from flask import Flask
+from flask_migrate import Migrate # 1 importeren van flask-migrate
 from .models import db
 from .config import Config
+
+migrate = Migrate()  # 2 migratie-object aanmaken
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
-
-    with app.app_context():
-        db.create_all()  # Create sql tables for our data models
+    migrate.init_app(app, db)  # <— 3 verbinden van migratiesysteem koppel flask-migrate aan app en db
 
     from .routes import main
     app.register_blueprint(main)
